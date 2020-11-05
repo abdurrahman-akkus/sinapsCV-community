@@ -1,0 +1,50 @@
+/* The Modal (background) */
+.modal {
+  z-index: 1; /* Sit on top */
+  width: 100%; /* Full width */
+  margin-top: 0;
+  display: flex;
+  background: rgba(180,180,180,0.9);
+  }
+
+/* Modal Content */
+.modal-content {
+  background: rgb(0,212,255);
+  background: linear-gradient(90deg, rgba(0,212,255,0.9051821412158614) 0%, rgba(161,8,108,0.9051821412158614) 50%, rgba(0,212,255,0.9051821412158614) 100%);
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 70%;
+  font-size: 25px;
+  -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+  box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+  height: 80vh;
+}
+
+
+
+/* The Close Button */
+.close {
+  color: #2f0c0c;
+  font-size: 28px;
+  font-weight: bold;
+  width: 28px;
+  height: 28px;
+  float: right;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal li span,
+.modal li button,
+.modal li input
+ {
+  height: 45%;
+  font-size: 14px;
+}

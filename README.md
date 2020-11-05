@@ -1,3 +1,3 @@
 # SinapsCV
 
-Sinaps Human Resources Project
+Sinaps Job Application Project

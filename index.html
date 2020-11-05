@@ -1,12 +1,1303 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Beybo-Sinaps CV</title>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/fontawesome.min.css">
+	<link rel="stylesheet" href="css/stil.css">
+	<link rel="stylesheet" href="css/loading.css">
+	<link rel="stylesheet" href="css/modal.css">
+	<link rel="stylesheet" href="css/fastselect.min.css">
+	<link rel="shortcut icon" type="image/svg" href="img/sinapsCV_logo.svg" />
+	<title>Beybo·Sinaps CV</title>
 </head>
+
 <body>
-	
-	
+
+	<div id="preloader" class="w-100 vh-100">
+		<img src="img/sinapsCV_loading.gif" class="m-auto">
+	</div>
+	<div id="app" class="container-fluid">
+		<main class="row">
+			<div class="col-sm-4 col-md-3 p-0">
+				<div id="side_menu" class="col-sm-4 col-md-3">
+					<div class="d-flex">
+						<img src="img/logo.png" style="height: 12vh;" alt="Beybo Logo" class="m-auto">
+					</div>
+					<div class="list-group mx-2" id="list-tab" role="tablist">
+						<button id="personal_info_link" class="list-group-item list-group-item-action checkpoint"
+							:class="personalInfo.status" data-toggle="tab" href="#personal_info" role="tab"
+							page="personalInfo" @click.stop.prevent="checkAndChange('#personal_info_link')">Kişisel
+							Bilgiler</button>
+						<button id="family_info_link" class="list-group-item list-group-item-action checkpoint"
+							:disabled="rec.identity==null" :class="familyInfo.status" data-toggle="tab"
+							href="#family_info" role="tab" page="familyInfo"
+							@click.stop.prevent="checkAndChange('#family_info_link')">Aile
+							Bilgileri</button>
+						<button id="education_info_link" class="list-group-item list-group-item-action checkpoint"
+							:disabled="rec.identity==null" :class="education.status" data-toggle="tab"
+							href="#education_info" role="tab" page="education"
+							@click.stop.prevent="checkAndChange('#education_info_link')">Eğitim
+							Bilgileri</button>
+						<button id="skills_link" class="list-group-item list-group-item-action checkpoint"
+							:disabled="rec.identity==null" :class="skills.status" data-toggle="tab" href="#skills"
+							role="tab" page="skills"
+							@click.stop.prevent="checkAndChange('#skills_link')">Yetenekler</button>
+						<button id="experiences_link" class="list-group-item list-group-item-action checkpoint"
+							:disabled="rec.identity==null" :class="expInfo.status" data-toggle="tab" href="#experiences"
+							role="tab" page="expInfo"
+							@click.stop.prevent="checkAndChange('#experiences_link')">Deneyimler</button>
+						<button id="others_link" class="list-group-item list-group-item-action checkpoint"
+							:disabled="rec.identity==null" :class="others.status" data-toggle="tab" href="#others"
+							role="tab" page="others" @click.stop.prevent="checkAndChange('#others_link')">Diğer
+							Bilgiler</button>
+						<button id="request_link" class="list-group-item list-group-item-action checkpoint"
+							:disabled="rec.identity==null" :class="request.status" data-toggle="tab" href="#request"
+							role="tab" page="request"
+							@click.stop.prevent="checkAndChange('#request_link')">Talep</button>
+						<hr class="w-100">
+
+						<button id="form_fill_rules_link" class="list-group-item list-group-item-action"
+							href="#form_fill_rules">Form Doldurma Kuralları</button>
+						<button id="personal_data_law_link" class="list-group-item list-group-item-action"
+							data-toggle="tab" href="#personal_data_law" role="tab" page="personalDataLaw"
+							:class="rec.lawConformation?'done':''" :disabled="rec.identity==null"
+							@click.stop.prevent="checkAndChange('#personal_data_law_link')">KVKK</button>
+
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-8 col-md-9 vh-100">
+				<div class="tab-content" id="tabs">
+					<div class="tab-pane fade show active" id="personal_info" role="tabpanel">
+						<div class="d-flex">
+							<h1 class="m-auto page-title">Kişisel Bilgiler</h1>
+						</div>
+						<div class="form-panel">
+							<h2 class="block-title">Genel Bilgiler</h2>
+							<div class="row">
+								<div class="col-md-6 mt-3">
+									<div class="input-container">
+										<input type="text" class="custom-input form-control form-control-lg"
+											@change="rec.name=rec.name.toLocaleUpperCase('TR')" placeholder=""
+											v-model="rec.name" required>
+										<span class="floating-label-lg">Ad</span>
+									</div>
+								</div>
+								<div class="col-md-6 mt-3">
+									<div class="input-container">
+										<input type="text" class="custom-input form-control form-control-lg"
+											@change="rec.lastName=rec.lastName.toLocaleUpperCase('TR')" placeholder=""
+											v-model="rec.lastName" required>
+										<span class="floating-label-lg">Soyad</span>
+									</div>
+								</div>
+								<div class="col-md-6 mt-3">
+									<label class="w-25">Uyruk</label>
+									<div class="btn-group btn-group-toggle" data-toggle="buttons">
+										<label class="btn btn-lg btn-outline-secondary"
+											:class="rec.nation=='TC'?'active':''" for="uyruk1"
+											@click="triggerChild('#uyruk1')">
+											<input type="radio" v-model="rec.nation" name="uyruk" value="TC" id="uyruk1"
+												:required="rec.nation==''">
+											T.C.
+										</label>
+
+										<label class="btn btn-lg btn-outline-secondary"
+											:class="rec.nation=='Diğer'?'active':''" for="uyruk2"
+											@click="triggerChild('#uyruk2')">
+											<input type="radio" v-model="rec.nation" name="uyruk" value="Diğer"
+												id="uyruk2" :required="rec.nation==''"> Yabancı
+										</label>
+									</div>
+								</div>
+								<div class="col-md-6 mt-3">
+									<div class="input-container">
+										<!--input type="number" class="custom-input form-control form-control-lg"
+											placeholder="" v-model="rec.identity" @change="getOldForm()" required
+											min="99999999999" max="99999999999"-->
+										<input type="text" class="custom-input form-control form-control-lg"
+											id="identity" placeholder="" v-model="rec.identity" @change="getOldForm()"
+											required minlength="11" maxlength="11" pattern="\d*">
+										<span class="floating-label-lg" v-show="rec.nation=='TC'">TC Kimlik
+											No</span>
+										<span class="floating-label-lg" v-show="rec.nation=='Diğer'">Yabancı
+											Kimlik
+											No</span>
+									</div>
+								</div>
+								<div class="col-md-6 mt-3">
+									<label class="w-25">Cinsiyet</label>
+									<div class="btn-group btn-group-toggle" data-toggle="buttons">
+										<label class="btn btn-lg btn-outline-primary"
+											:class="rec.gender=='M'?'active':''" @click="triggerChild('#cinsiyet1')">
+											<input type="radio" v-model="rec.gender" value="M" name="cinsiyet"
+												id="cinsiyet1" :required="rec.gender==''">
+											Erkek
+										</label>
+										<label class="btn btn-lg btn-outline-pinky" :class="rec.gender=='F'?'active':''"
+											@click="triggerChild('#cinsiyet2')">
+											<input type="radio" v-model="rec.gender" value="F" name="cinsiyet"
+												id="cinsiyet2" :required="rec.gender==''">
+											Kadın
+										</label>
+									</div>
+								</div>
+								<div class="col-md-6 mt-3">
+									<label class="w-25">Evlilik</label>
+									<div class="btn-group btn-group-toggle" data-toggle="buttons">
+										<label class="btn btn-lg btn-outline-primary"
+											:class="rec.marital.status=='S'?'active':''"
+											@click="triggerChild('#maritalStatus1')">
+											<input type="radio" v-model="rec.marital.status" value="S"
+												name="maritalStatus" id="maritalStatus1"
+												:required="rec.marital.status==''">
+											Bekar
+										</label>
+										<label class="btn btn-lg btn-outline-success"
+											:class="rec.marital.status=='M'?'active':''"
+											@click="triggerChild('#maritalStatus2')">
+											<input type="radio" v-model="rec.marital.status" value="M"
+												name="maritalStatus" id="maritalStatus2"
+												:required="rec.marital.status==''">
+											Evli
+										</label>
+										<!--label class="btn btn-lg btn-outline-danger"
+											:class="rec.marital.status=='D'?'active':''"
+											@click="triggerChild('#maritalStatus3')">
+											<input type="radio" v-model="rec.marital.status" value="D"
+												name="maritalStatus" id="maritalStatus3">
+											Dul
+										</label>
+										<label class="btn btn-lg btn-outline-warning"
+											:class="rec.marital.status=='P'?'active':''"
+											@click="triggerChild('#maritalStatus4')">
+											<input type="radio" v-model="rec.marital.status" value="P"
+												name="maritalStatus" id="maritalStatus4">
+											Ayrı
+										</label-->
+									</div>
+								</div>
+								<div class="col-md-6 mt-3">
+									<div class="input-container">
+										<input type="date" class="custom-input form-control form-control-lg"
+											placeholder="" v-model="rec.dateOfBirth" required>
+										<span class="floating-label-lg">Doğum Tarihi</span>
+									</div>
+								</div>
+								<div class="col-md-6 mt-3">
+									<div class="input-container">
+										<input type="text" class="custom-input form-control form-control-lg"
+											@change="toArray(rec.driverLicences,'driverLicenceString')" placeholder=""
+											data-toggle="popover" title="Dikkat!"
+											data-content="Her Bir Ehliyeti Yazdıktan Sonta 'Enter' Tuşuna Basınız! Etiketler Aşağıda Görünecektir"
+											data-placement="top" v-model="driverLicenceString">
+										<span class="floating-label-lg">Ehliyetler</span>
+
+										<span class="tag-container">
+											<span class="tag" v-for="(e,index) in rec.driverLicences">
+												<span>{{e}}</span>
+												<span class="tag-close"
+													@click="deleteEquipmentTag(rec.driverLicences,index)">×</span>
+											</span>
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-panel">
+							<h2 class="block-title">İletişim Bilgileri</h2>
+							<div class="row">
+								<div class="col-md-6 mt-3">
+									<div class="input-container">
+										<input type="tel" class="custom-input form-control form-control-lg"
+											placeholder="" v-model="rec.phone">
+										<span class="floating-label-lg">Ev Tel. No</span>
+									</div>
+								</div>
+								<div class="col-md-6 mt-3">
+									<div class="input-container">
+										<input type="tel" class="custom-input form-control form-control-lg"
+											placeholder="" v-model="rec.gsm" required>
+										<span class="floating-label-lg">Cep Tel. No</span>
+									</div>
+								</div>
+								<div class="col-md-6 mt-3">
+									<div class="input-container">
+										<textarea class="custom-input form-control form-control-lg" placeholder=""
+											v-model="rec.address"></textarea>
+										<span class="floating-label-lg">Adres</span>
+									</div>
+								</div>
+								<div class="col-md-6 mt-3">
+									<div class="input-container">
+										<input type="email" class="custom-input form-control form-control-lg"
+											placeholder="" v-model="rec.email">
+										<span class="floating-label-lg">Eposta</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-panel" v-show="rec.gender=='M'">
+							<h2 class="block-title">Askerlik Bilgileri</h2>
+							<div class="row">
+								<div class="col-md-6 mt-3">
+									<label class="w-25">Askerlik</label>
+									<div class="btn-group btn-group-toggle" data-toggle="buttons">
+										<label class="btn btn-lg btn-outline-success"
+											:class="rec.military.status=='D'?'active':''"
+											@click="triggerChild('#militaryStatus1')">
+											<input type="radio" v-model="rec.military.status" value="D"
+												name="militaryStatus" id="militaryStatus1"
+												:required="rec.gender=='M'&&rec.military.status==''"
+												@change="militaryStatusChange()">
+											Yapıldı
+										</label>
+										<label class="btn btn-lg btn-outline-dark"
+											:class="rec.military.status=='S'?'active':''"
+											@click="triggerChild('#militaryStatus2')">
+											<input type="radio" v-model="rec.military.status" value="S"
+												name="militaryStatus" id="militaryStatus2"
+												:required="rec.gender=='M'&&rec.military.status==''"
+												@change="militaryStatusChange()">
+											Tecilli
+										</label>
+										<label class="btn btn-lg btn-outline-secondary"
+											:class="rec.military.status=='E'?'active':''"
+											@click="triggerChild('#militaryStatus3')">
+											<input type="radio" v-model="rec.military.status" value="E"
+												name="militaryStatus" id="militaryStatus3"
+												:required="rec.gender=='M'&&rec.military.status==''"
+												@change="militaryStatusChange()">
+											Muaf
+										</label>
+									</div>
+								</div>
+								<div class="col-md-6 mt-3"></div>
+								<div class="col-md-6 mt-3" v-show="rec.military.status=='S'">
+									<div class="input-container">
+										<input type="date" class="custom-input form-control form-control-lg"
+											placeholder="" v-model="rec.military.suspension"
+											:required="rec.military.status=='S'">
+										<span class="floating-label-lg">Tecil Bitiş Tarihi</span>
+									</div>
+								</div>
+								<div class="col-md-6 mt-3" v-show="rec.military.status=='E'">
+									<label class="w-25">Süre</label>
+									<div class="btn-group btn-group-toggle" data-toggle="buttons">
+										<label class="btn btn-lg btn-outline-primary"
+											:class="rec.military.exempt.status=='F'?'active':''"
+											@click="triggerChild('#exempt1')">
+											<input type="radio" v-model="rec.military.exempt.status" value="F"
+												name="exempt" id="exempt1"
+												:required="rec.military.status=='E'&&rec.military.exempt.status==''">
+											Süreli
+										</label>
+										<label class="btn btn-lg btn-outline-danger"
+											:class="rec.military.exempt.status=='I'?'active':''"
+											@click="triggerChild('#exempt2')">
+											<input type="radio" v-model="rec.military.exempt.status" value="I"
+												name="exempt" id="exempt2"
+												:required="rec.military.status=='E'&&rec.military.exempt.status==''">
+											Süresiz
+										</label>
+									</div>
+								</div>
+								<div class="col-md-6 mt-3"
+									v-if="rec.military.status=='E'&&rec.military.exempt.status=='F'">
+									<div class="input-container">
+										<input type="date" class="custom-input form-control form-control-lg"
+											placeholder="" v-model="rec.military.exempt.date"
+											:required="rec.military.exempt.status=='F'">
+										<span class="floating-label-lg">Muafiyet Bitiş Tarihi</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="family_info" role="tabpanel">
+						<div class="d-flex">
+							<h1 class="m-auto page-title">Aile Bilgileri</h1>
+						</div>
+						<div class="form-panel" v-if="rec.marital.status!=''&&rec.marital.status!='M'">
+							<h2>Ebeveynler</h2>
+							<div class="row">
+								<div class="col-md-6 mt-3">
+									<div class="input-container">
+										<input type="text" class="custom-input form-control form-control-lg"
+											placeholder="" v-model="rec.fatherName" :required="rec.marital.status=='S'">
+										<span class="floating-label-lg">Baba Adı</span>
+									</div>
+								</div>
+								<div class="col-md-6 mt-3">
+									<div class="input-container">
+										<input type="text" class="custom-input form-control form-control-lg"
+											placeholder="" v-model="rec.fatherJob" :required="rec.marital.status=='S'">
+										<span class="floating-label-lg">Babanın Mesleği</span>
+									</div>
+								</div>
+								<div class="col-md-6 mt-3">
+									<div class="input-container">
+										<input type="text" class="custom-input form-control form-control-lg"
+											placeholder="" v-model="rec.motherName" :required="rec.marital.status=='S'">
+										<span class="floating-label-lg">Anne Adı</span>
+									</div>
+								</div>
+								<div class="col-md-6 mt-3">
+									<div class="input-container">
+										<input type="text" class="custom-input form-control form-control-lg"
+											placeholder="" v-model="rec.motherJob" :required="rec.marital.status=='S'">
+										<span class="floating-label-lg">Annenin Mesleği</span>
+									</div>
+								</div>
+								<div class="col-md-6 mt-3">
+									<div class="input-container">
+										<input type="number" step="1" min="0"
+											class="custom-input form-control form-control-lg" placeholder=""
+											v-model="rec.siblingsCount" :required="rec.marital.status=='S'">
+										<span class="floating-label-lg">Kardeş Sayısı</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-panel"
+							v-if="rec.marital.status=='M'||rec.marital.status=='D'||rec.marital.status=='P'">
+							<h2>Çekirdek Aile</h2>
+							<div class="row">
+								<div class="col-md-6 mt-3" v-if="rec.marital.status=='M'">
+									<div class="input-container">
+										<input type="text" class="custom-input form-control form-control-lg"
+											placeholder="" v-model="rec.marital.partnerJob"
+											:required="rec.marital.status=='M'">
+										<span class="floating-label-lg">Eşin İşi</span>
+									</div>
+								</div>
+								<div class="col-md-6 mt-3" v-if="rec.marital.status=='M'">
+									<div class="input-container">
+										<input type="text" class="custom-input form-control form-control-lg"
+											placeholder="" v-model="rec.marital.partnerWorkplace"
+											:required="rec.marital.status=='M'">
+										<span class="floating-label-lg">Eşin İş Yeri</span>
+									</div>
+								</div>
+								<div class="col-md-6 mt-3">
+									<div class="input-container">
+										<input type="number" class="custom-input form-control form-control-lg"
+											placeholder="" v-model="rec.marital.childrenCount"
+											@change="resetChildStates()" :required="rec.marital.status=='M'">
+										<span class="floating-label-lg">Çocuk Sayısı</span>
+									</div>
+								</div>
+								<div class="col-md-12 mt-3">
+									<div class="row" v-for="(stat, index) in rec.marital.childStates">
+										<div class="input-container col-md-6 mt-3">
+											<input type="number" class="custom-input form-control form-control-lg"
+												placeholder="" v-model="stat.age" :required="rec.marital.status=='M'">
+											<span class="floating-label-lg ml-3">Çocuğun Yaşı</span>
+										</div>
+										<div class="col-md-6 mt-3">
+											<label class="w-25">Velayet</label>
+											<div class="btn-group btn-group-toggle" data-toggle="buttons">
+												<label class="btn btn-lg btn-outline-primary"
+													:class="stat.custody=='F'?'active':''"
+													@click="triggerChild('#custody1_'+index)">
+													<input type="radio" v-model="stat.custody" value="F" name="custody"
+														:id="'custody1_'+index"
+														:required="rec.marital.status=='M'&&stat.custody==''">
+													Baba
+												</label>
+												<label class="btn btn-lg btn-outline-pinky"
+													:class="stat.custody=='M'?'active':''"
+													@click="triggerChild('#custody2_'+index)">
+													<input type="radio" v-model="stat.custody" value="M" name="custody"
+														:id="'custody2_'+index"
+														:required="rec.marital.status=='M'&&stat.custody==''">
+													Anne
+												</label>
+												<label class="btn btn-lg btn-outline-success"
+													:class="stat.custody=='U'?'active':''"
+													@click="triggerChild('#custody3_'+index)">
+													<input type="radio" v-model="stat.custody" value="U" name="custody"
+														:id="'custody3_'+index"
+														:required="rec.marital.status=='M'&&stat.custody==''">
+													Birlikte
+												</label>
+											</div>
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div><!-- family_info-Bitiş -->
+					<div class="tab-pane fade" id="education_info" role="tabpanel">
+						<div class="d-flex">
+							<h1 class="m-auto page-title">Eğitim Bilgileri</h1>
+						</div>
+						<div class="form-panel">
+							<h2>Okul Bilgileri</h2>
+							<div class="row">
+								<div class="col-md-12 mt-3">
+									<label class="w-25">Eğitim Seviyesi</label>
+									<div class="btn-group btn-group-toggle row" data-toggle="buttons">
+										<label class="btn btn-lg btn-outline-secondary"
+											:class="rec.educationLevel=='0'?'active':''"
+											@click="triggerChild('#eduLevel0')">
+											<input type="radio" v-model="rec.educationLevel" value="0" name="eduLevel"
+												id="eduLevel0" :required="rec.educationLevel==''">
+											Yok
+										</label>
+										<label class="btn btn-lg btn-outline-secondary"
+											:class="rec.educationLevel=='1'?'active':''"
+											@click="triggerChild('#eduLevel1')">
+											<input type="radio" v-model="rec.educationLevel" value="1" name="eduLevel"
+												id="eduLevel1" :required="rec.educationLevel==''">
+											İlkokul
+										</label>
+										<label class="btn btn-lg btn-outline-secondary"
+											:class="rec.educationLevel=='2'?'active':''"
+											@click="triggerChild('#eduLevel2')">
+											<input type="radio" v-model="rec.educationLevel" value="2" name="eduLevel"
+												id="eduLevel2" :required="rec.educationLevel==''">
+											Ortaokul
+										</label>
+										<label class="btn btn-lg btn-outline-secondary"
+											:class="rec.educationLevel=='3'?'active':''"
+											@click="triggerChild('#eduLevel3')">
+											<input type="radio" v-model="rec.educationLevel" value="3" name="eduLevel"
+												id="eduLevel3" :required="rec.educationLevel==''">
+											Lise
+										</label>
+										<label class="btn btn-lg btn-outline-secondary"
+											:class="rec.educationLevel=='4'?'active':''"
+											@click="triggerChild('#eduLevel4')">
+											<input type="radio" v-model="rec.educationLevel" value="4" name="eduLevel"
+												id="eduLevel4" :required="rec.educationLevel==''">
+											Y. Okul
+										</label>
+										<label class="btn btn-lg btn-outline-secondary"
+											:class="rec.educationLevel=='5'?'active':''"
+											@click="triggerChild('#eduLevel5')">
+											<input type="radio" v-model="rec.educationLevel" value="5" name="eduLevel"
+												id="eduLevel5" :required="rec.educationLevel==''">
+											Lisans
+										</label>
+										<label class="btn btn-lg btn-outline-secondary"
+											:class="rec.educationLevel=='6'?'active':''"
+											@click="triggerChild('#eduLevel6')">
+											<input type="radio" v-model="rec.educationLevel" value="6" name="eduLevel"
+												id="eduLevel6" :required="rec.educationLevel==''">
+											Lisansüstü
+										</label>
+									</div>
+								</div>
+								<div class="row col-12" v-for="(school, index) in rec.schools">
+									<!-- Okul Listesi -->
+									<div class="col-md-7 col-lg-5 mt-3">
+										<div class="input-container">
+											<input type="text" class="custom-input form-control form-control-lg"
+												placeholder="" v-model="school.name" required>
+											<span class="floating-label-lg">Okul Adı</span>
+										</div>
+									</div>
+									<div class="col-md-5 col-lg-4 mt-3">
+										<div class="input-container">
+											<input type="text" class="custom-input form-control form-control-lg"
+												placeholder="" v-model="school.department">
+											<span class="floating-label-lg">Bölüm</span>
+										</div>
+									</div>
+									<div class="col-md-3 mt-3">
+										<div class="btn-group btn-group-toggle" data-toggle="buttons">
+											<label class="btn btn-lg btn-outline-warning"
+												:class="school.status=='0'?'active':''"
+												@click="triggerChild('#schoolStatus0_'+index)">
+												<input type="radio" v-model="school.status" value="0"
+													name="schoolStatus" :id="'schoolStatus0_'+index"
+													:required="school.status==''">
+												Devam
+											</label>
+											<label class="btn btn-lg btn-outline-primary"
+												:class="school.status=='1'?'active':''"
+												@click="triggerChild('#schoolStatus1_'+index)">
+												<input type="radio" v-model="school.status" value="1"
+													name="schoolStatus" :id="'schoolStatus1_'+index"
+													:required="school.status==''">
+												Bitti
+											</label>
+										</div>
+
+										<i class="fa fa-2x fa-minus-circle btn-delete"
+											@click="rec.schools.splice(index,1)"></i>
+									</div>
+								</div>
+								<div class="col-12 mt-4 middle-btn-line">
+									<span class="middle-btn-container">
+										<i class="fas fa-2x fa-plus-circle btn-add" @click="addSchool()"></i>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="form-panel">
+							<h2>Kurs ve Seminerler</h2>
+							<div class="row" v-for="(stat, index) in rec.courses">
+								<!-- Okul Listesi -->
+								<div class="col-md-7 col-lg-7 mt-3">
+									<div class="input-container">
+										<input type="text" class="custom-input form-control form-control-lg"
+											placeholder="" v-model="stat.name">
+										<span class="floating-label-lg">Kurs-Seminer Adı</span>
+									</div>
+								</div>
+								<div class="col-md-4 col-lg-4 mt-3">
+									<div class="input-container">
+										<input type="date" class="custom-input form-control form-control-lg"
+											placeholder="" v-model="stat.date">
+										<span class="floating-label-lg">Tarih</span>
+									</div>
+								</div>
+								<div class="col-1 mt-3">
+									<i class="fa fa-2x fa-minus-circle btn-delete mt-1"
+										@click="rec.courses.splice(index,1)"></i>
+								</div>
+							</div>
+
+							<div class="col-12 mt-4 middle-btn-line">
+								<span class="middle-btn-container">
+									<i class="fas fa-2x fa-plus-circle btn-add" @click="addCourse()"></i>
+								</span>
+							</div>
+
+						</div>
+					</div><!-- education_info-Bitiş -->
+					<div class="tab-pane fade " id="skills" role="tabpanel">
+						<div class="d-flex">
+							<h1 class="m-auto page-title">Yetenekler</h1>
+						</div>
+						<div class="form-panel">
+							<h2>Yabancı Diller</h2>
+							<div class="row">
+								<div class="row col-12">
+									<div class="offset-md-5 col-md-2 text-center d-none d-md-block">Okuma</div>
+									<div class="col-md-2 text-center d-none d-md-block">Yazma</div>
+									<div class="col-md-2 text-center d-none d-md-block">Konuşma</div>
+								</div>
+								<div v-for="(fL, index) in rec.foreignLanguages" class="row col-12 mt-3">
+									<div class="col-md-5">
+										<div class="input-container">
+											<select type="text"
+												class="custom-input form-control form-control-lg my-select"
+												placeholder="" v-model="fL.name">
+												<option v-for="lang in languages" :value="lang.name"
+													:selected="fL.name==lang.name">{{lang.name}}</option>
+											</select>
+											<span class="floating-label-lg">Dil</span>
+										</div>
+									</div>
+									<div class="col-md-2 m-auto star-container">
+										<span class="d-inline d-md-none">Okuma</span>
+										<label :for="'levelR1_'+index">
+											<i class="far fa-star" :class="fL.r>=1?'fas':'far'"></i>
+											<input type="radio" :id="'levelR1_'+index" hidden name="levelR"
+												v-model="fL.r" value="1">
+
+										</label>
+										<label :for="'levelR2_'+index">
+											<i class="far fa-star" :class="fL.r>=2?'fas':'far'"></i>
+											<input type="radio" :id="'levelR2_'+index" hidden name="levelR"
+												v-model="fL.r" value="2">
+
+										</label>
+										<label :for="'levelR3_'+index">
+											<i class="far fa-star" :class="fL.r>=3?'fas':'far'"></i>
+											<input type="radio" :id="'levelR3_'+index" hidden name="levelR"
+												v-model="fL.r" value="3">
+
+										</label>
+										<label :for="'levelR4_'+index">
+											<i class="far fa-star" :class="fL.r>=4?'fas':'far'"></i>
+											<input type="radio" :id="'levelR4_'+index" hidden name="levelR"
+												v-model="fL.r" value="4">
+
+										</label>
+										<label :for="'levelR5_'+index">
+											<i class="far fa-star" :class="fL.r>=5?'fas':'far'"></i>
+											<input type="radio" :id="'levelR5_'+index" hidden name="levelR"
+												v-model="fL.r" value="5">
+
+										</label>
+									</div>
+									<div class="col-md-2 m-auto star-container">
+										<span class="d-inline d-md-none">Yazma</span>
+										<label :for="'levelW1_'+index">
+											<i class="far fa-star" :class="fL.w>=1?'fas':'far'"></i>
+											<input type="radio" :id="'levelW1_'+index" hidden name="levelW"
+												v-model="fL.w" value="1">
+
+										</label>
+										<label :for="'levelW2_'+index">
+											<i class="far fa-star" :class="fL.w>=2?'fas':'far'"></i>
+											<input type="radio" :id="'levelW2_'+index" hidden name="levelW"
+												v-model="fL.w" value="2">
+
+										</label>
+										<label :for="'levelW3_'+index">
+											<i class="far fa-star" :class="fL.w>=3?'fas':'far'"></i>
+											<input type="radio" :id="'levelW3_'+index" hidden name="levelW"
+												v-model="fL.w" value="3">
+
+										</label>
+										<label :for="'levelW4_'+index">
+											<i class="far fa-star" :class="fL.w>=4?'fas':'far'"></i>
+											<input type="radio" :id="'levelW4_'+index" hidden name="levelW"
+												v-model="fL.w" value="4">
+
+										</label>
+										<label :for="'levelW5_'+index">
+											<i class="far fa-star" :class="fL.w>=5?'fas':'far'"></i>
+											<input type="radio" :id="'levelW5_'+index" hidden name="levelW"
+												v-model="fL.w" value="5">
+
+										</label>
+									</div>
+									<div class="col-md-2 m-auto star-container">
+										<span class="d-inline d-md-none">Konuşma</span>
+										<label :for="'levelS1_'+index">
+											<i class="far fa-star" :class="fL.s>=1?'fas':'far'"></i>
+											<input type="radio" :id="'levelS1_'+index" hidden name="levelS"
+												v-model="fL.s" value="1">
+
+										</label>
+										<label :for="'levelS2_'+index">
+											<i class="far fa-star" :class="fL.s>=2?'fas':'far'"></i>
+											<input type="radio" :id="'levelS2_'+index" hidden name="levelS"
+												v-model="fL.s" value="2">
+
+										</label>
+										<label :for="'levelS3_'+index">
+											<i class="far fa-star" :class="fL.s>=3?'fas':'far'"></i>
+											<input type="radio" :id="'levelS3_'+index" hidden name="levelS"
+												v-model="fL.s" value="3">
+
+										</label>
+										<label :for="'levelS4_'+index">
+											<i class="far fa-star" :class="fL.s>=4?'fas':'far'"></i>
+											<input type="radio" :id="'levelS4_'+index" hidden name="levelS"
+												v-model="fL.s" value="4">
+
+										</label>
+										<label :for="'levelS5_'+index">
+											<i class="far fa-star" :class="fL.s>=5?'fas':'far'"></i>
+											<input type="radio" :id="'levelS5_'+index" hidden name="levelS"
+												v-model="fL.s" value="5">
+
+										</label>
+									</div>
+									<div class="col-1 m-auto">
+										<i class="fa fa-2x fa-minus-circle btn-delete"
+											@click="rec.foreignLanguages.splice(index,1)"></i>
+									</div>
+								</div>
+								<div class="col-12 mt-4 middle-btn-line">
+									<span class="middle-btn-container">
+										<i class="fas fa-2x fa-plus-circle btn-add" @click="addForeignLanguage()"></i>
+									</span>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-panel">
+							<h2>Bilgisayar Bilgisi</h2>
+							<div class="row">
+								<div class="row col-12">
+									<div class="offset-md-9 col-md-2 text-center d-none d-md-block">Seviye</div>
+								</div>
+								<div v-for="(fL, index) in rec.programs" class="row col-12 mt-3">
+									<div class="col-md-9">
+										<div class="input-container">
+											<input type="text" class="custom-input form-control form-control-lg"
+												placeholder="" v-model="fL.name">
+											<span class="floating-label-lg">Program Adı</span>
+										</div>
+									</div>
+
+									<div class="col-md-2 m-auto star-container">
+										<span class="d-inline d-md-none">Seviye</span>
+										<label :for="'prgLevel1_'+index">
+											<i class="far fa-star" :class="fL.level>=1?'fas':'far'"></i>
+											<input type="radio" :id="'prgLevel1_'+index" hidden name="prgLevel"
+												v-model="fL.level" value="1">
+
+										</label>
+										<label :for="'prgLevel2_'+index">
+											<i class="far fa-star" :class="fL.level>=2?'fas':'far'"></i>
+											<input type="radio" :id="'prgLevel2_'+index" hidden name="prgLevel"
+												v-model="fL.level" value="2">
+
+										</label>
+										<label :for="'prgLevel3_'+index">
+											<i class="far fa-star" :class="fL.level>=3?'fas':'far'"></i>
+											<input type="radio" :id="'prgLevel3_'+index" hidden name="prgLevel"
+												v-model="fL.level" value="3">
+
+										</label>
+										<label :for="'prgLevel4_'+index">
+											<i class="far fa-star" :class="fL.level>=4?'fas':'far'"></i>
+											<input type="radio" :id="'prgLevel4_'+index" hidden name="prgLevel"
+												v-model="fL.level" value="4">
+
+										</label>
+										<label :for="'prgLevel5_'+index">
+											<i class="far fa-star" :class="fL.level>=5?'fas':'far'"></i>
+											<input type="radio" :id="'prgLevel5_'+index" hidden name="prgLevel"
+												v-model="fL.level" value="5">
+
+										</label>
+									</div>
+
+									<div class="col-1 m-auto">
+										<i class="fa fa-2x fa-minus-circle btn-delete"
+											@click="rec.programs.splice(index,1)"></i>
+									</div>
+								</div>
+								<div class="row col-12 mt-4 middle-btn-line">
+									<span class="middle-btn-container">
+										<i class="fas fa-2x fa-plus-circle btn-add" @click="addProgram()"></i>
+									</span>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-panel">
+							<h2>Ofis Malzemeleri</h2>
+							<div class="row">
+								<div class="col-12 mt-3">
+									<div class="input-container">
+										<input type="text" id="officeEquipments" @change="toArray(rec.officeEquipments,
+											'officeEquipmentsString')" class="custom-input form-control form-control-lg" placeholder=""
+											v-model="officeEquipmentsString" data-toggle="popover" title="Dikkat!"
+											data-content="Her Bir Malzemlerin Adını Yazdıktan Sonta 'Enter' Tuşuna Basınız! Etiketler Aşağıda Görünecektir"
+											data-placement="top">
+										<span class="floating-label-lg">Malzeme Adı</span>
+									</div>
+
+									<span class="tag-container">
+										<span class="tag" v-for="(e,index) in rec.officeEquipments">
+											<span>{{e}}</span>
+											<span class="tag-close"
+												@click="deleteEquipmentTag(rec.officeEquipments,index)">×</span>
+										</span>
+									</span>
+								</div>
+							</div>
+						</div>
+					</div><!-- skills-Bitiş -->
+					<div class="tab-pane fade" id="experiences" role="tabpanel">
+						<div class="d-flex">
+							<h1 class="m-auto page-title">Deneyimler</h1>
+						</div>
+						<div class="form-panel">
+							<h2>Çalışılan Yerler</h2>
+							<div class="row mt-2" v-for="(exp, index) in rec.experiences"
+								style="border:1px solid #ced4da; margin: 0; padding:  auto 1rem; border-radius: .5rem;">
+								<div class=" row col-md-11 mt-3">
+									<div class="col-md-12">
+										<div class="input-container">
+											<input type="text" class="custom-input form-control form-control-lg"
+												placeholder="" v-model="exp.workplace" required>
+											<span class="floating-label-lg">İş Yeri Adı</span>
+										</div>
+									</div>
+									<div class="col-md-6 mt-1">
+										<div class="input-container">
+											<input type="text" class="custom-input form-control form-control-lg"
+												placeholder="" v-model="exp.job" required>
+											<span class="floating-label-lg">Görev</span>
+										</div>
+									</div>
+									<div class="col-md-6 mt-1">
+										<div class="input-container">
+											<input type="text" class="custom-input form-control form-control-lg"
+												placeholder="" v-model="exp.sector">
+											<span class="floating-label-lg">Sektör</span>
+										</div>
+									</div>
+									<div class="col-md-6 mt-1">
+										<div class="input-container">
+											<input type="tel" class="custom-input form-control form-control-lg"
+												placeholder="" v-model="exp.phone">
+											<span class="floating-label-lg">Tel</span>
+										</div>
+									</div>
+
+									<div class="col-md-3 mt-1">
+										<div class="input-container">
+											<input type="number" class="custom-input form-control form-control-lg"
+												placeholder="" v-model="exp.durationYear">
+											<span class="floating-label-lg">Süre(Yıl)</span>
+										</div>
+									</div>
+									<div class="col-md-3 mt-1">
+										<div class="input-container">
+											<input type="number" class="custom-input form-control form-control-lg"
+												placeholder="" v-model="exp.durationMonth">
+											<span class="floating-label-lg">Süre(Ay)</span>
+										</div>
+									</div>
+									<div class="col-md-12 mt-1">
+										<label class="w-25">Ayrılma Sebebi</label>
+										<div class="btn-group btn-group-toggle row" data-toggle="buttons">
+											<label class="btn btn-lg btn-outline-secondary"
+												:class="exp.leaving.reason=='0'?'active':''"
+												:for="'leaveReason0_'+index"
+												@click="triggerChild('#leaveReason0_'+index)">
+												<input type="radio" v-model="exp.leaving.reason" value="0"
+													name="leaveReason" :id="'leaveReason0_'+index"
+													:required="exp.leaving.reason==''">
+												İstifa
+											</label>
+											<label class="btn btn-lg btn-outline-secondary"
+												:class="exp.leaving.reason=='1'?'active':''"
+												:for="'leaveReason1_'+index"
+												@click="triggerChild('#leaveReason1_'+index)">
+												<input type="radio" v-model="exp.leaving.reason" value="1"
+													name="leaveReason" :id="'leaveReason1_'+index"
+													:required="exp.leaving.reason==''">
+												Sağlık
+											</label>
+											<label class="btn btn-lg btn-outline-secondary"
+												:class="exp.leaving.reason=='2'?'active':''"
+												:for="'leaveReason2_'+index"
+												@click="triggerChild('#leaveReason2_'+index)">
+												<input type="radio" v-model="exp.leaving.reason" value="2"
+													name="leaveReason" :id="'leaveReason2_'+index"
+													:required="exp.leaving.reason==''">
+												İşten Çıkarılma
+											</label>
+											<label class="btn btn-lg btn-outline-secondary"
+												:class="exp.leaving.reason=='3'?'active':''"
+												:for="'leaveReason3_'+index"
+												@click="triggerChild('#leaveReason3_'+index)">
+												<input type="radio" v-model="exp.leaving.reason" value="3"
+													name="leaveReason" :id="'leaveReason3_'+index"
+													:required="exp.leaving.reason==''">
+												Diğer
+											</label>
+										</div>
+									</div>
+
+									<div class="col-md-12 mt-1 mb-3">
+										<div class="input-container">
+											<textarea class="custom-input form-control form-control-lg" placeholder=""
+												v-model="exp.leaving.explaination" required></textarea>
+											<span class="floating-label-lg">Ayrılma Sebebi Açıklaması</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-1 mt-3 d-flex">
+									<i class="fa fa-2x fa-minus-circle btn-delete m-auto"
+										@click="rec.experiences.splice(index,1)"></i>
+								</div>
+							</div>
+							<div class="row col-12 mt-4 middle-btn-line">
+								<span class="middle-btn-container">
+									<i class="fas fa-2x fa-plus-circle btn-add" @click="addExperience()"></i>
+								</span>
+							</div>
+						</div>
+					</div><!-- experiences-Bitiş -->
+					<div class="tab-pane fade" id="others" role="tabpanel">
+						<div class="d-flex">
+							<h1 class="m-auto page-title">Diğer Bilgiler</h1>
+						</div>
+						<div class="form-panel">
+							<h2>Diğer Bilgiler</h2>
+							<div class="row">
+								<div class="col-md-12 mt-1">
+									<label class="w-25">Kimle Beraber Yaşıyorsunuz?</label>
+									<div class="btn-group btn-group-toggle row" data-toggle="buttons">
+										<label class="btn btn-lg btn-outline-secondary"
+											:class="rec.livesWith=='P'?'active':''" for="livesWithP"
+											@click="triggerChild('#livesWithP')">
+											<input type="radio" v-model="rec.livesWith" value="P" name="livesWith"
+												id="livesWithP" :required="rec.livesWith==''">
+											Ebeveynlerle
+										</label>
+										<label class="btn btn-lg btn-outline-secondary"
+											:class="rec.livesWith=='F'?'active':''" for="livesWithF"
+											@click="triggerChild('#livesWithF')">
+											<input type="radio" v-model="rec.livesWith" value="F" name="livesWith"
+												id="livesWithF" :required="rec.livesWith==''">
+											Çekirdek Aile
+										</label>
+										<label class="btn btn-lg btn-outline-secondary"
+											:class="rec.livesWith=='S'?'active':''" for="livesWithS"
+											@click="triggerChild('#livesWithS')">
+											<input type="radio" v-model="rec.livesWith" value="S" name="livesWith"
+												id="livesWithS" :required="rec.livesWith==''">
+											Yalnız
+										</label>
+										<label class="btn btn-lg btn-outline-secondary"
+											:class="rec.livesWith=='O'?'active':''" for="livesWithO"
+											@click="triggerChild('#livesWithO')">
+											<input type="radio" v-model="rec.livesWith" value="O" name="livesWith"
+												id="livesWithO" :required="rec.livesWith==''">
+											Diğer
+										</label>
+									</div>
+								</div>
+								<div class="col-md-12 mt-1">
+									<label class="w-25">Eviniz Kira Mı?</label>
+									<div class="btn-group btn-group-toggle row" data-toggle="buttons">
+										<label class="btn btn-lg btn-outline-primary"
+											:class="rec.homeOwnership=='O'?'active':''" for="homeOwnershipO"
+											@click="triggerChild('#homeOwnershipO')">
+											<input type="radio" v-model="rec.homeOwnership" value="O"
+												name="homeOwnership" id="homeOwnershipO"
+												:required="rec.homeOwnership==''">
+											Hayır
+										</label>
+										<label class="btn btn-lg btn-outline-info"
+											:class="rec.homeOwnership=='R'?'active':''" for="homeOwnershipR"
+											@click="triggerChild('#homeOwnershipR')">
+											<input type="radio" v-model="rec.homeOwnership" value="R"
+												name="homeOwnership" id="homeOwnershipR"
+												:required="rec.homeOwnership==''">
+											Evet
+										</label>
+									</div>
+								</div>
+								<div class="col-12 mt-3">
+									<div class="input-container">
+										<input type="text" id="illnesses" @change="toArray(rec.illnesses,
+											'illnessesString')" class="custom-input form-control form-control-lg" placeholder=""
+											v-model="illnessesString" data-toggle="popover" title="Dikkat!"
+											data-content="Her Bir Hastalık Adı Yazdıktan Sonra 'Enter' Tuşuna Basınız! Etiketler Aşağıda Görünecektir"
+											data-placement="top">
+										<span class="floating-label-lg">Kronik Hastalıklarınız</span>
+									</div>
+
+									<span class="tag-container">
+										<span class="tag" v-for="(e,index) in rec.illnesses">
+											<span>{{e}}</span>
+											<span class="tag-close"
+												@click="deleteEquipmentTag(rec.illnesses,index)">×</span>
+										</span>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="form-panel">
+							<h2>Referanslar</h2>
+							<div class="row mt-2" v-for="(crd, index) in rec.credentials"
+								style="border:1px solid #ced4da; margin: 0; padding:  auto 1rem; border-radius: .5rem;">
+								<div class=" row col-md-11 mt-3">
+									<div class="col-md-6 mt-1">
+										<div class="input-container">
+											<input type="text" class="custom-input form-control form-control-lg"
+												placeholder="" v-model="crd.name">
+											<span class="floating-label-lg">Referansın Adı</span>
+										</div>
+									</div>
+									<div class="col-md-6 mt-1">
+										<div class="input-container">
+											<input type="text" class="custom-input form-control form-control-lg"
+												placeholder="" v-model="crd.workplace">
+											<span class="floating-label-lg">İş Yeri</span>
+										</div>
+									</div>
+									<div class="col-md-6 mt-1">
+										<div class="input-container">
+											<input type="text" class="custom-input form-control form-control-lg"
+												placeholder="" v-model="crd.relationship">
+											<span class="floating-label-lg">İlişki</span>
+										</div>
+									</div>
+									<div class="col-md-6 mt-1 mb-3">
+										<div class="input-container">
+											<input type="tel" class="custom-input form-control form-control-lg"
+												placeholder="" v-model="crd.phone">
+											<span class="floating-label-lg">Tel</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-1 mt-3 d-flex">
+									<i class="fa fa-2x fa-minus-circle btn-delete m-auto"
+										@click="rec.credentials.splice(index,1)"></i>
+								</div>
+							</div>
+							<div class="row col-12 mt-4 middle-btn-line">
+								<span class="middle-btn-container">
+									<i class="fas fa-2x fa-plus-circle btn-add" @click="addCredentials()"></i>
+								</span>
+							</div>
+						</div>
+					</div><!-- others-Bitiş -->
+					<div class="tab-pane fade" id="request" role="tabpanel">
+						<div class="d-flex">
+							<h1 class="m-auto page-title">Talep</h1>
+						</div>
+						<div class="form-panel">
+							<h2>İş Talebi</h2>
+							<div class="row">
+								<div class="col-12 mt-3">
+									<div class="input-container">
+										<input type="text" list="jobList" id="requestedJob" @change="toArray(rec.jobs,
+											'requestedJobString')" class="custom-input form-control form-control-lg my-select" placeholder=""
+											v-model="requestedJobString" data-toggle="popover" title="Dikkat!"
+											data-content="Birden Fazla Seçebilirsiniz!" data-placement="top">
+										<span class="floating-label-lg">Talep Ettiğiniz Görev</span>
+									</div>
+
+									<span class="tag-container">
+										<span class="tag" v-for="(e,index) in rec.jobs">
+											<span>{{e}}</span>
+											<span class="tag-close" @click="deleteEquipmentTag(rec.jobs,index)">×</span>
+										</span>
+									</span>
+								</div>
+								<div class="col-md-6 col-lg-3 mt-2 d-flex">
+									<div class="custom-control custom-checkbox mb-3 ml-3 m-auto">
+										<input type="checkbox" class="custom-control-input" id="proposed_salary"
+											v-model="rec.anySalary" value="any"
+											:required="rec.salary==''||rec.salary==null"
+											@change="rec.anySalary?rec.salary='':rec.salary=rec.salary">
+										<label class="custom-control-label" for="proposed_salary">Uygun Görülen
+											Maaş</label>
+									</div>
+								</div>
+								<div class="col-md-6 col-lg-3 mt-2" v-show="!rec.anySalary">
+									<div class="input-container">
+										<input type="number" id="salary"
+											class="custom-input form-control form-control-lg" placeholder=""
+											v-model="rec.salary" :required="rec.anySalary==''||rec.anySalary==false">
+										<span class="floating-label-lg">Maaş Talebi</span>
+									</div>
+								</div>
+								<div class="col-md-6 col-lg-3 mt-2 d-flex">
+									<div class="custom-control custom-checkbox mb-3 ml-3 m-auto">
+										<input type="checkbox" class="custom-control-input" id="asap" v-model="rec.asap"
+											value="any" :required="rec.startDate==''||rec.startDate==null"
+											@change="rec.asap?rec.startDate='':rec.startDate=rec.startDate">
+										<label class="custom-control-label" for="asap">En Yakın Tarih</label>
+									</div>
+								</div>
+								<div class="col-md-6 col-lg-3 mt-2" v-show="!rec.asap">
+									<div class="input-container">
+										<input type="date" id="startDate"
+											class="custom-input form-control form-control-lg" placeholder=""
+											v-model="rec.startDate" :required="rec.asap==''||rec.asap==false">
+										<span class="floating-label-lg">Başlama Tarihi</span>
+									</div>
+								</div>
+								<div class="col-md-12 mt-3 mb-3">
+									<div class="input-container">
+										<textarea class="custom-input form-control form-control-lg" placeholder=""
+											v-model="rec.lastStatement" maxlength="65"></textarea>
+										<span class="floating-label-lg">Eklemek İstedikleriniz</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div><!-- request-Bitiş -->
+					<div class="tab-pane fade" id="personal_data_law" role="tabpanel">
+						<div class="d-flex">
+							<h1 class="m-auto page-title">Kişisel Verilerin Korunması Kanunu</h1>
+						</div>
+						<div class="form-panel">
+							<h2>KVKK Metni</h2>
+							<blockquote class="blockquote">
+								<h3>Türkiye Cumhuriyeti Anayasası</h3>
+								Herkes, özel hayatına ve aile hayatına saygı
+								gösterilmesini isteme hakkına sahiptir. Özel hayatın ve aile hayatının gizliliğine
+								dokunulamaz.(Ek fıkra: 12/9/2010-5982/2 md.) Herkes, kendisiyle ilgili kişisel verilerin
+								korunmasını isteme hakkına sahiptir. Bu hak; kişinin kendisiyle ilgili kişisel veriler
+								hakkında bilgilendirilme, bu verilere erişme, bunların düzeltilmesini veya silinmesini
+								talep etme ve amaçları doğrultusunda kullanılıp kullanılmadığını öğrenmeyi de kapsar.
+								Kişisel veriler, ancak kanunda öngörülen hallerde veya kişinin açık rızasıyla
+								işlenebilir. Kişisel verilerin korunmasına ilişkin esas ve usuller kanunla düzenlenir.
+								<footer class="blockquote-footer">MADDE 20 <cite title="Source Title">T.C.
+										Anayasası</cite></footer>
+							</blockquote>
+						</div>
+						<div class="custom-control custom-checkbox mb-3 ml-3">
+							<input type="checkbox" class="custom-control-input" id="law_conformation"
+								v-model="rec.lawConformation" required
+								@change="rec.lawConformation?personalDataLaw.status='done':personalDataLaw.status=''">
+							<label class="custom-control-label" for="law_conformation"> Yukarıdaki metni, okudum,
+								anladım,
+								onaylıyorum.</label>
+							<div class="invalid-feedback">Bu onaylama yapılmadan devam edilemez!</div>
+						</div>
+					</div><!-- personal_data_law-Bitiş -->
+				</div><!-- tabContent-Bitiş -->
+				<div class="bottom-menu">
+					<button class="btn backward" :class="(selected!=''&&selected!='personalInfo')?'':'hidden'"
+						@click="checkAndChange(null,false)">Geri</button>
+					<button class="btn mid" :class="(selected=='personalDataLaw'&&rec.lawConformation)?'':'hidden'"
+						@click="saveAndReset()">FORMU
+						TAMAMLA</button>
+					<button class="btn forward"
+						:class="(selected!=''&&selected!='personalDataLaw')&&!(selected=='personalInfo'&&(rec.identity==null||rec.identity==''))?'':'hidden'"
+						@click="checkAndChange(null,true)">İleri</button>
+				</div>
+			</div>
+
+	</div>
+
+	<div id="sonuc_alert" style="display: none;"></div>
+	</main>
+	</div>
+	</div>
+	<datalist id="jobList">
+		<option value="Uygun Görülen"></option>
+	</datalist>
+	<!-- The Modal -->
+	<div id="myModal" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content">
+			<span class="close">&times;</span>
+			<div style="overflow: auto;">
+				<h2>Form Doldurma Kuralları</h2>
+				<ol>
+					<li><i class="fas fa-map-marker-alt" style="color: #a1a32c"></i> işareti hangi sayfada olduğunuzu
+						gösterir.</li>
+					<li><i class="fas fa-check-circle" style="color:rgb(0,255,0);"></i> işareti tamamladığınız bölümleri
+						gösterir.</li>
+					<li><i class="fas fa-minus-circle text-secondary"></i> işareti ilgili bölümde eksik doldurduğunuz
+						kısımlar olduğunu gösterir. Başvuruyu tamamlayabilmek için eksik alanları doldurmanız
+						gerekmektedir.</li>
+					<li>Sol tarafta bulunan panelde <button class="list-group-item list-group-item-action active"
+							disabled="" style="width: 25%; display: inline;">Bölüm Adı</button> butonu ve bölümün üst
+						kısmında bulunan başlık hangi bölümde olduğunuzu gösterir.</li>
+					<li>TC Kimlik No(Yabancı Kimlik No) bilgisi girilmeden diğer bölümler kullanılamaz.</li>
+					<li>Ehliyet, Ofis Ekipmanları, Talep Edilen İş, Kronik Rahatsızlıklar gibi bilgiler birden fazla ise
+						her biri yazıldıktan sonra <img src="img/enter-key.svg" style="height: 35px;"> tuşuna basarak
+						eklemeyi yapabilirsiniz. Ekledikleriniz alt kısımda <span class="tag"><span>B</span> <span
+								class="tag-close">×</span></span> şeklinde görünecektir. <i
+							class="fas fa-times-circle text-primary bg-light" style="border-radius: 50%;"></i> butonuna
+						basarak silebilirsiniz</li>
+					<li><i class="fas fa-plus-circle btn-add"></i> işareti okul, deneyim gibi bilgilere birden fazla
+						veri girilmesi için kullanılır. <i class="fas fa-minus-circle btn-delete"></i> ise yanlış
+						eklenmiş verilerin silinmesini sağlar.</li>
+					<li>Zorunlu alanları doldurmadan/yanlış doldurarak sayfayı değiştirmek isterseniz sistem
+						doldurulması gereken yerleri kırmızı renk ile <input type="text"
+							class="custom-input form-control form-control-lg" disabled=""
+							style="width: 25%; border-color: red; display: inline;"> şeklinde gösterecektir ve altında
+						uyarı yazısı görünecektir.</li>
+					<li>
+						Bir sonraki bölüme geçmek için sayfanın altında bulunan <button class="btn forward" disabled=""
+							style=" display: inline;">İleri</button><br>
+						Bir önceki bölüme dönmek için sayfanın altında bulunan <button class="btn backward" disabled=""
+							style=" display: inline;">Geri</button>
+						tuşunu kullanabilir ya da sol taraftaki panelden istediğiniz bir bölüme tıklayabilirsiniz.
+					</li>
+					<li>Talep sayfasından sonra KVKK(Kişisel Verileri Koruma Kanunu) onayı verdikten sonra <button
+							class="btn mid" disabled="" style="display: inline;">FORMU TAMAMLA</button> butonuyla
+						başvurunuzu tamamlayabilirsiniz. Formu Tamamla butonuna basmazsanız BAŞVURUNUZ GEÇERSİZ
+						OLACAKTIR.
+					</li>
+					<li>Bu bilgileri sol panelde bulunan <button style="width: auto;display:inline;"
+							class="list-group-item list-group-item-action">Form Doldurma Kuralları</button> butonuna
+						tıklayarak tekrar görüntüleyebilirsiniz.</li>
+				</ol>
+			</div>
+		</div>
+	</div>
+	<script>let HOST = "http://120.120.16.148:8080/sinapsIK/";</script>
+	<!-- development version, includes helpful console warnings -->
+	<script src="js/vue-dev.js"></script>
+	<!-- production version, optimized for size and speed -->
+	<!--script src="js/vue.js"></script-->
+	<script src="js/popper.min.js"></script>
+	<script src="js/jquery-3.4.0.min.js"></script>
+	<script src="js/bootstrap.js"></script>
+	<script src="js/fastselect.standalone.min.js"></script>
+	<script src="js/main.js"></script>
+	<script src="js/modal.js"></script>
+	<script>
+		$('[data-toggle="popover"]').popover();
+		$('[data-toggle="popover"]').on('blur', function () {
+			$(this).popover('hide');
+		});
+		$('button[data-toggle="tab"]').on('show.bs.tab', function (e) {
+			app.selectPage("#" + $(this).attr("id"));
+			e.target // newly activated tab
+			e.relatedTarget // previous active tab
+		});
+		window.onloadeddata = loadingKapat();
+		//$('.multipleSelect').fastselect();
+		/*window.onbeforeunload = confirmExit;
+		function confirmExit() {
+			return "Bu Sayfadan Çıkmak İstediğinize Emin Misiniz?";
+		}*/
+
+		var loadingInterval;
+
+		function loadingAc(timeout = 1000) {
+			clearTimeout(loadingInterval);
+			loadingInterval = setTimeout(function () {
+				if ($('#preloader').css('display') == "none") {
+					$('#status').fadeIn(); // will first fade out the loading animation
+					$('#preloader').fadeIn(); // will fade out the white DIV that covers the website.
+					$('body').css({
+						'overflow': 'hidden'
+					});
+				}
+			}, timeout);
+		}
+
+		function loadingKapat() {
+			clearTimeout(loadingInterval);
+			$('#status').fadeOut(); // will first fade out the loading animation
+			$('#preloader').fadeOut(); // will fade out the white DIV that covers the website.
+			$('body').css({
+				'overflow': 'visible'
+			});
+		}
+
+
+		function hataGoster(xmlhttprequest, textstatus, message) {
+			console.error(textstatus);
+			var sunucuHatasi = textstatus == "error" ? xmlhttprequest.status + "/" + SERV_ERR_STATUS[xmlhttprequest.status] : "";
+			$("#sonuc_alert").removeClass('alert-success').addClass('alert').addClass('alert-danger').show('fast', function () { });
+			$("#sonuc_alert").html('<strong>HATA!</strong> Bir Hata Gerçekleşti!&nbsp; ==> ' +
+				ERR_STATUS[textstatus] +
+				' <strong><code>' + sunucuHatasi + '</code></strong>');
+			setTimeout(function () {
+				$("#sonuc_alert").hide('slow', function () { });
+			}, 5000);
+		}
+
+
+		const ERR_STATUS = {
+			timeout: "Zaman Aşımı",
+			notmodified: "Değiştirilmemiş",
+			nocontent: "İçerik Yok",
+			error: "Diğer Hata",
+			abort: "İptal",
+			parsererror: "Parçalama Hatası"
+		}
+
+		const SERV_ERR_STATUS = {
+			0: "Tanımsız Hata",
+			400: "Kötü İstek",
+			401: "Yetkisiz",
+			402: "Ödeme Gerekli",
+			403: "Yasaklandı",
+			404: "Sayfa Bulunamadı",
+			405: "İzin verilmeyen Metod",
+			406: "Kabul Edilemez ",
+			500: "Arkayüz Sunucu/Servis Hatası",
+			501: "Uygulanmamış",
+			502: "Geçersiz Ağ Geçidi",
+			503: "Hizmet Yok"
+		}
+	</script>
 </body>
+
 </html>
