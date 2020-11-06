@@ -65,15 +65,15 @@ function checkIsSeenNotification() {
 
 function checkListDoldur() {
   $("#check_list").append("<h3>Sütunlar</h3><ul></ul>");
-  let hiddenColumns = localStorage.getItem("hiddenColumns");
-  hiddenColumns =
-    hiddenColumns === null || hiddenColumns === undefined
-      ? {}
-      : JSON.parse(hiddenColumns);
+  let columns = localStorage.getItem("columns");
+  columns =
+    columns === null || columns === undefined ? {} : JSON.parse(columns);
   for (const l in LABELS) {
     let seen =
-      hiddenColumns[l] !== undefined
+      columns[l] == "none"
         ? "none"
+        : columns[l] == "show"
+        ? "show"
         : LABELS[l].css === undefined
         ? ""
         : LABELS[l].css.display === undefined
@@ -87,19 +87,20 @@ function checkListDoldur() {
     );
   }
 }
+
 function gridifyColumnToggle($elm, key) {
-  let hiddenColumns = localStorage.getItem("hiddenColumns");
-  hiddenColumns = hiddenColumns ? JSON.parse(hiddenColumns) : {};
-  if ($elm.attr("checked")) {
-    $elm.attr("checked", false);
-    gridifyColumnHide(key);
-    hiddenColumns[key] = "";
-  } else {
+  let columns = localStorage.getItem("columns");
+  columns = columns ? JSON.parse(columns) : {};
+  if (!$elm.prop("checked")) {
     $elm.attr("checked", true);
+    gridifyColumnHide(key);
+    columns[key] = "none";
+  } else {
+    $elm.attr("checked", false);
     gridifyColumnShow(key);
-    delete hiddenColumns[key];
+    columns[key] = "show";
   }
-  localStorage.setItem("hiddenColumns", JSON.stringify(hiddenColumns));
+  localStorage.setItem("columns", JSON.stringify(columns));
 }
 
 function gridifyColumnShow(key) {

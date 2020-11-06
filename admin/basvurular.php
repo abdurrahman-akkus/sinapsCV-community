@@ -256,7 +256,7 @@ if($yetki<2) {
 
 .dataTables_wrapper .row:nth-child(2) {
     padding-top:15px;
-    padding-bottom:25px;
+    padding-bottom:30px;
 }
 
 .dataTables_wrapper .row:last-child::before {
@@ -267,7 +267,7 @@ if($yetki<2) {
 .dataTables_wrapper .row:last-child {
     position: absolute;
     left: 15px;
-    bottom:30px;
+    bottom:37px;
     width: 100%;
     padding-left: 10px;
     padding-right: 10px;

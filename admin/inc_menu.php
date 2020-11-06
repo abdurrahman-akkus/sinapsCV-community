@@ -60,7 +60,7 @@ $msg_bildirim = $msg->rowCount();
                     </ul>
                     <!-- /.dropdown-user -->
                 </li>
-                <li><a href="/SinapsCV" target="_blank"><i class="far fa-hand-point-right"></i></a></li>
+                <li><a href="/sinapsCV" target="_blank"><i class="far fa-hand-point-right"></i></a></li>
                 <!-- /.dropdown -->
             </ul>
             <!-- /.navbar-top-links -->

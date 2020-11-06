@@ -57,7 +57,7 @@ if(@$_SESSION ["girisKontrol"]==1) {
 
 
 					<div class="container-login100-form-btn">
-						<input class="login100-form-btn" type="submit" name="submit" value="Giriş">
+						<button class="login100-form-btn" type="submit" name="submit" value="submit">Giriş</button>
 							
 					</div>
 
