@@ -1,3 +1,3 @@
-# SinapsCV
+# SinapsCV-community
 
-Sinaps Job Application Project
+SinapsCV is an application web site for human resources
